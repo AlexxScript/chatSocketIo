@@ -6,7 +6,7 @@
     <title>Socket.IO chat</title>
     <style>
         body {
-            background-color: #333;
+            background-color: #fff;
             margin: 0;
             padding-bottom: 3rem;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -72,6 +72,25 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        const input = document.getElementById("input");
+        const form = document.getElementById("form");
+        const message = document.getElementById("messages");
+
+        form.addEventListener("submit",function (e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit("chat message", input.value);
+                input.value = "";
+            }
+        });
+
+        socket.on("chat message",(msg)=>{
+            const item = document.createElement("li");
+            item.textContent = msg;
+            message.appendChild(item);
+            window.scrollTo(0,document.body.scrollHeight);
+        })
+
     </script>
 </body>
 

@@ -18,9 +18,18 @@ app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'index.html'));
 });
 
-io.on("connection",()=>{
-    console.log("user connected");
+io.on("connection",(socket)=>{
+    // console.log("user connected");
+
+    socket.on("chat message",(msg) => {
+        io.emit("chat message",msg);
+    });
+
+    // socket.on("disconnect",()=>{
+    //     console.log("user disconnected");
+    // })
 });
+
 
 server.listen(port,()=>{
     console.log(`running on server: ${port}`);
