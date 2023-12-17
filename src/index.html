@@ -68,6 +68,7 @@
     <ul id="messages"></ul>
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
+        <button id="toggle-btn">Disconnect</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -75,20 +76,32 @@
         const input = document.getElementById("input");
         const form = document.getElementById("form");
         const message = document.getElementById("messages");
+        const toggleButton = document.getElementById('toggle-btn');
 
-        form.addEventListener("submit",function (e) {
+        toggleButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (socket.connected) {
+                toggleButton.innerText = 'Connect';
+                socket.disconnect();
+            } else {
+                toggleButton.innerText = 'Disconnect';
+                socket.connect();
+            }
+        });
+
+        form.addEventListener("submit", function (e) {
             e.preventDefault();
             if (input.value) {
-                socket.emit("chat message", input.value);
+                socket.emit("clientChatMessage", input.value);
                 input.value = "";
             }
         });
 
-        socket.on("chat message",(msg)=>{
+        socket.on("serverChatMessage", (msg) => {
             const item = document.createElement("li");
             item.textContent = msg;
             message.appendChild(item);
-            window.scrollTo(0,document.body.scrollHeight);
+            window.scrollTo(0, document.body.scrollHeight);
         })
 
     </script>
