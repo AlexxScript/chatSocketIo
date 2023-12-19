@@ -72,7 +72,14 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        let counter = 0;
+        const socket = io({
+            auth: {
+                serverOffset: 0
+            },
+            ackTimeout: 10000,
+            retries: 3,
+        });
         const input = document.getElementById("input");
         const form = document.getElementById("form");
         const message = document.getElementById("messages");
@@ -92,16 +99,18 @@
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             if (input.value) {
-                socket.emit("clientChatMessage", input.value);
+                const clientOffset = `${socket.id}-${counter++}`;
+                socket.emit("clientChatMessage", input.value, clientOffset);
                 input.value = "";
             }
         });
 
-        socket.on("serverChatMessage", (msg) => {
+        socket.on("serverChatMessage", (msg, serverOffset) => {
             const item = document.createElement("li");
             item.textContent = msg;
             message.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
+            socket.auth.serverOffset = serverOffset;
         })
 
     </script>
