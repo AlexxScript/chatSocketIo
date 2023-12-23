@@ -50,7 +50,14 @@ if (cluster.isPrimary) {
         res.sendFile(join(__dirname, 'index.html'));
     });
 
+
+    var romo = 1;
     io.on("connection", async (socket) => {
+
+        let connectedUsersCount = Object.keys(io.sockets.sockets).length;
+        console.log(connectedUsersCount)
+        socket.join("room1"+romo)
+        io.to("room1"+romo).emit("hola",romo)
 
         socket.on("clientChatMessage", async (msg, clientOffset, callback) => {
             let result;
@@ -83,9 +90,9 @@ if (cluster.isPrimary) {
             }
         }
 
-        socket.on("disconnect", () => {
-            console.log("user disconnected");
-        })
+        // socket.on("disconnect", () => {
+        //     console.log("user disconnected");
+        // })
     });
 
 
